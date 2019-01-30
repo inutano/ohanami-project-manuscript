@@ -1,20 +1,26 @@
 #
 # draw_histogram.R for Ohanami Project Manuscript figure 3
+# Usage:
+#  Rscript draw_histogram.R
 #
+
+# Install ggplot2 if missing
+# ggplot2
+if (!require("ggplot2")) {
+  install.packages("ggplot2", repos="https://cran.ism.ac.jp/")
+}
+library("ggplot2")
 
 # Read file and transpose
 file.path <- "./data/assembled.csv"
 df.temp <- read.csv(file.path, row.names=1)
-df <- data.frame(t(df_temp))
+df <- data.frame(t(df.temp))
 
 # Check number of lines
 nrow(df)
 
 # Check summary
 summary(df)
-
-# Load library
-library(ggplot2)
 
 # Set function to align labels
 give.n <- function(x){ return(c(y = median(x)-.1, label = length(x))) }
