@@ -1,7 +1,7 @@
 #
 # draw_histogram.R for Ohanami Project Manuscript figure 3
 # Usage:
-#  Rscript draw_histogram.R
+#  Rscript draw_boxplot.R
 #
 
 # Install ggplot2 if missing
