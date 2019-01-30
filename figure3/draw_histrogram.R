@@ -1,0 +1,33 @@
+#
+# draw_histogram.R for Ohanami Project Manuscript figure 3
+#
+
+# Read file and transpose
+file.path <- "./data/assembled.csv"
+df.temp <- read.csv(file.path, row.names=1)
+df <- data.frame(t(df_temp))
+
+# Check number of lines
+nrow(df)
+
+# Check summary
+summary(df)
+
+# Load library
+library(ggplot2)
+
+# Set function to align labels
+give.n <- function(x){ return(c(y = median(x)-.1, label = length(x))) }
+
+# Create ggplot object
+p <- ggplot(stack(lapply(df, as.numeric)), aes(x = reorder(ind, -values, FUN=mean), y = values))
+p <- p + geom_boxplot(outlier.size=.5)
+p <- p + scale_y_log10()
+p <- p + stat_summary(fun.data = give.n, geom = "text", size = 2)
+p <- p + theme_bw()
+p <- p + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p <- p + labs(x = "Phylum", y = "Number of assigned reads per sample (log10)")
+p <- p + annotate("text", label=paste("#samples:", nrow(df), sep=" "), x=length(colnames(df))*0.9, y=max(df)*0.8)
+
+# Save in the file
+ggsave(file="./figure3.pdf", plot=p, width=170, units="mm")
