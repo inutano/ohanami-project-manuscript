@@ -2,11 +2,11 @@
 # Usage:
 #  Rscript --vanilla dotplot.R data.tab
 
-# Load libraries
+# Install ggplot2 if missing
 if (!require("ggplot2")) {
   install.packages("ggplot2", repos="https://cran.ism.ac.jp/")
 }
-library(ggplot2)
+library("ggplot2")
 
 # Load data
 argv <- commandArgs(trailingOnly=T)
