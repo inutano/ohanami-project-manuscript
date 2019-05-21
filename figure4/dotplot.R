@@ -11,13 +11,15 @@ library("ggplot2")
 # Load data
 argv <- commandArgs(trailingOnly=T)
 df <- read.delim(argv[1])
+df$label <- paste(df$species, df$order, df$mismatches, sep=" / ")
+numberOfSamples <- length(unique(df$sample_id))
 
 # Generate plot object
-p <- ggplot(df, aes(x=reorder(sample_id, sample_id, function(x)-length(x)), y=reorder(label, -mismatches), colour=num_of_reads))
+p <- ggplot(df, aes(x=reorder(sample_id, sample_id, function(x)-length(x)), y=reorder(label, -mismatches), colour=log10(num_of_reads)))
 p <- p + geom_point()
 p <- p + theme_bw()
 p <- p + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
-p <- p + labs(x="Samples", y="species/order/mismatches", colour="#reads")
+p <- p + labs(x=paste("Samples (total:", numberOfSamples, ")", sep=""), y="species / order / mismatches", colour="#reads (log10)")
 
 # Save plot
-ggsave(plot=p, file="./Fig4.pdf", width=234, height=234, unit="mm")
+ggsave(plot=p, file="./Fig4.pdf", width=702, height=234, unit="mm")
