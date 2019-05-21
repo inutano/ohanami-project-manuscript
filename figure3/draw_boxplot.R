@@ -1,7 +1,10 @@
-#
 # draw_histogram.R for Ohanami Project Manuscript figure 3
+#
+# Citation:
+# Ohta T, Kawashima T, Shinozaki NO, Dobashi A, Hiraoka S, Hoshino T, Kanno K, Kataoka T, Kawashima S, Matsui M, Nemoto W, Nishijima S, Suganuma N, Suzuki H, Taguchi Y, Takenaka Y, Tanigawa Y, Tsuneyoshi M, Yoshitake K, Sato Y, Yamashita R, Arakawa K, Iwasaki W. Collaborative environmental DNA sampling from petal surfaces of flowering cherry Cerasus × yedoensis “Somei-yoshino” across the Japanese archipelago. Journal of Plant Research [Internet]. 2018 Feb 19;131(4):709–17. Available from: http://dx.doi.org/10.1007/s10265-018-1017-x
+#
 # Usage:
-#  Rscript draw_boxplot.R
+#  Rscript draw_boxplot.R assembled.csv
 #
 
 # Install ggplot2 if missing
@@ -12,8 +15,8 @@ if (!require("ggplot2")) {
 library("ggplot2")
 
 # Read file and transpose
-file.path <- "./data/assembled.csv"
-df.temp <- read.csv(file.path, row.names=1)
+argv <- commandArgs(trailingOnly=T)
+df.temp <- read.csv(argv[1], row.names=1)
 df <- data.frame(t(df.temp))
 
 # Check number of lines
