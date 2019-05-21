@@ -44,13 +44,14 @@ get_order() {
 tar zxf "${BLAST_RESULT_TAR}" -C "${BLAST_RESULT_DIR}"
 
 # Merge BLASTN hits against the Organelle Genome Resources with filename
-# Filter sequences with percent identity >98% and alignment length >250
-# ./plastid.blastn.tsv (3cols): filename, sseqid
+# Filter sequences with 100 percent identity and alignment length >250
+# ./plastid.blastn.tsv (3cols): filename, sseqid, number of reads
 find "${BLAST_RESULT_DIR}" | grep "bln$" |\
 while read file; do
   sample_id="$(basename ${file} | sed -e "s:-.*$::g")"
   cat ${file} |\
-  awk -v id="${sample_id}" '$3 > 99 && $4 > 250 { print id "\t" $2 }' >> "./plastid.blastn.tsv"
+  awk -v id="${sample_id}" '$3 == 100 && $4 > 250 { print id "\t" $2 }' |\
+  sort | uniq -c | awk '{ print $2 "\t" $3 "\t" $1 }' >> "./plastid.blastn.tsv"
 done
 
 # Create plastid definition list using TogoWS (http://togows.org)
@@ -67,24 +68,11 @@ while read sseqid; do
 done
 
 # Merge BLASTN result files
-# ./plastid.blastn.tax.tsv (5cols): sample id, sseqid, #mismatches, label (species/order/mismatches), number of reads
+# ./plastid.blastn.tax.tsv (5cols): sample id, sseqid, number of reads, species, order, #mismatches
+echo -e "sample_id\tsseqid\tnum_of_reads\tspecies\torder\tmismatches" > "./plastid.blastn.tax.tsv"
 cat "./plastid.blastn.tsv" | while read line; do
   sseqid="$(echo ${line} | awk '{ print $2 }')"
   tax_info="$(grep ${sseqid} "./sseqid-tax.tsv" | cut -f 2,3,4)"
-  if [[ ! -z "${tax_info}" ]]; then
-    echo -e "${line}\t${tax_info}"
-  fi
-done | sort |\
-awk '
-  BEGIN{
-    FS=OFS="\t";
-    print "sample_id", "sseqid", "mismatches", "label", "num_of_reads"
-  }{
-    seq_count[$1 "\t" $2 "\t" $5 "\t" $3 " / " $4 " / " $5] += 1
-  }
-  END{
-    for (seq in seq_count) {
-      print seq "\t" seq_count[seq]
-    }
-  }
-' >> "./plastid.blastn.tax.tsv"
+  echo -e "${line}\t${tax_info}" |\
+  awk -F'\t' 'NF == 6'
+done >> "./plastid.blastn.tax.tsv"
