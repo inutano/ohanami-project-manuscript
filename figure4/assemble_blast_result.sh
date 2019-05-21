@@ -1,6 +1,18 @@
 #!/bin/bash
+# Bash script to assemble multiple blastn result files and assign taxonomic information using TogoGenome database taxonomy RDF
+# License: MIT, Tazro Inutano Ohta, inutano@gmail.com
+#
+# Citation:
+# Ohta T, Kawashima T, Shinozaki NO, Dobashi A, Hiraoka S, Hoshino T, Kanno K, Kataoka T, Kawashima S, Matsui M, Nemoto W, Nishijima S, Suganuma N, Suzuki H, Taguchi Y, Takenaka Y, Tanigawa Y, Tsuneyoshi M, Yoshitake K, Sato Y, Yamashita R, Arakawa K, Iwasaki W. Collaborative environmental DNA sampling from petal surfaces of flowering cherry Cerasus × yedoensis “Somei-yoshino” across the Japanese archipelago. Journal of Plant Research [Internet]. 2018 Feb 19;131(4):709–17. Available from: http://dx.doi.org/10.1007/s10265-018-1017-x
+#
 # Usage:
-#  ./assemble_blast_result.sh <blast_result_dir>
+#  ./assemble_blast_result.sh <blast_result_tar>
+# The blastn result file tar file used in the publication is available on https://github.com/inutano/ohanami-project-manuscript/tree/master/figure4
+#
+# To draw the plot, run dotplot.R with the output of this script "plastid.blastn.tax.tsv"
+# or use Docker:
+# docker run -it --rm -v $(pwd):/work -w /work bioconductor/release_base2:R3.5.2_Bioc3.8 Rscript --vanilla dotplot.R plastid.blastn.tax.tsv
+#
 set -eu
 
 BLAST_RESULT_TAR="${1}"
