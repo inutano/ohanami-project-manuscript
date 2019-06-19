@@ -75,16 +75,16 @@ while read sseqid; do
   tax_order=$(get_order ${organism})
   num_mismatch=$(grep "${sseqid}" "./data/plastid.numMismatch-vs-Sakura.txt" | cut -f 2)
   if [[ ! -z "${num_mismatch}" ]]; then
-    echo -e "${sseqid}\t${organism}\t${tax_order}\t${num_mismatch}" >> "./sseqid-tax.tsv"
+    printf "${sseqid}\t${organism}\t${tax_order}\t${num_mismatch}\n" >> "./sseqid-tax.tsv"
   fi
 done
 
 # Merge BLASTN result files
 # ./plastid.blastn.tax.tsv (5cols): sample id, sseqid, number of reads, species, order, #mismatches
-echo -e "sample_id\tsseqid\tnum_of_reads\tspecies\torder\tmismatches" > "./plastid.blastn.tax.tsv"
+printf "sample_id\tsseqid\tnum_of_reads\tspecies\torder\tmismatches\n" > "./plastid.blastn.tax.tsv"
 cat "./plastid.blastn.tsv" | while read line; do
   sseqid="$(echo ${line} | awk '{ print $2 }')"
   tax_info="$(grep ${sseqid} "./sseqid-tax.tsv" | cut -f 2,3,4)"
-  echo -e "${line}\t${tax_info}" |\
+  printf "${line}\t${tax_info}\n" |\
   awk -F'\t' 'NF == 6'
 done >> "./plastid.blastn.tax.tsv"
